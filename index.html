@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Christmas Student Grading System</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  /* Snowflake styles */
+  .snowflake {
+    position: fixed;
+    top: -10px;
+    z-index: 50;
+    color: white;
+    font-size: 1rem;
+    user-select: none;
+    pointer-events: none;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(100vh) rotate(360deg); }
+  }
+</style>
+
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-red-700 via-green-800 to-red-900 flex items-center justify-center">
+
+<div class="w-full max-w-2xl px-4">
+
+<div class="bg-green-900/50 backdrop-blur-xl border border-green-700/50 shadow-2xl rounded-2xl p-8">
+
+<div class="mb-6 text-center">
+<h1 class="text-2xl font-bold text-white">
+🎄 Student Grading System 🎄
+</h1>
+</div>
+
+<form id="grade-form" class="space-y-6">
+
+<!-- Student Name -->
+<div>
+<label class="block text-sm font-medium text-white">Student</label>
+<input id="student-name" type="text" required
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"/>
+</div>
+
+<!-- Subject Names -->
+<div id="phase1-subjects" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<div>
+<label class="text-xs text-white">Subject 1 Name</label>
+<input id="subject1-name" type="text"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-1.5 text-xs"/>
+</div>
+
+<div>
+<label class="text-xs text-white">Subject 2 Name</label>
+<input id="subject2-name" type="text"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-1.5 text-xs"/>
+</div>
+
+<div>
+<label class="text-xs text-white">Subject 3 Name</label>
+<input id="subject3-name" type="text"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-1.5 text-xs"/>
+</div>
+
+<div>
+<label class="text-xs text-white">Subject 4 Name</label>
+<input id="subject4-name" type="text"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-1.5 text-xs"/>
+</div>
+
+<div>
+<label class="text-xs text-white">Subject 5 Name</label>
+<input id="subject5-name" type="text"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-1.5 text-xs"/>
+</div>
+
+</div>
+
+<!-- Grades -->
+<div id="phase2-grades" class="hidden">
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<div>
+<label class="text-sm text-white">
+<span id="subject1-display">Subject 1</span> Grade
+</label>
+<input id="grade1" type="number" step="0.01" min="1" max="5"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2"/>
+</div>
+
+<div>
+<label class="text-sm text-white">
+<span id="subject2-display">Subject 2</span> Grade
+</label>
+<input id="grade2" type="number" step="0.01" min="1" max="5"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2"/>
+</div>
+
+<div>
+<label class="text-sm text-white">
+<span id="subject3-display">Subject 3</span> Grade
+</label>
+<input id="grade3" type="number" step="0.01" min="1" max="5"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2"/>
+</div>
+
+<div>
+<label class="text-sm text-white">
+<span id="subject4-display">Subject 4</span> Grade
+</label>
+<input id="grade4" type="number" step="0.01" min="1" max="5"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2"/>
+</div>
+
+<div>
+<label class="text-sm text-white">
+<span id="subject5-display">Subject 5</span> Grade
+</label>
+<input id="grade5" type="number" step="0.01" min="1" max="5"
+class="w-full rounded-lg border border-white/40 bg-white/10 text-white px-3 py-2"/>
+</div>
+
+</div>
+
+</div>
+
+<!-- Buttons -->
+
+<button type="button" id="save-subjects-button"
+class="w-full rounded-lg bg-red-600 hover:bg-red-500 text-white py-2.5 font-semibold transition">
+Save Subjects
+</button>
+
+<button type="submit" id="submit-button"
+class="w-full rounded-lg bg-green-600 hover:bg-green-500 text-white py-2.5 font-semibold hidden">
+Calculate Average
+</button>
+
+</form>
+
+<!-- Output -->
+<div id="output" class="mt-6 text-center">
+
+<p id="average-display" class="text-lg font-bold text-white hidden"></p>
+
+<p id="status-message" class="text-xs text-white/80"></p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- Snowflakes -->
+<script>
+  const snowflakeCount = 50;
+  for (let i = 0; i < snowflakeCount; i++) {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.textContent = '❄';
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.fontSize = 12 + Math.random() * 28 + 'px';
+    snowflake.style.opacity = 0.3 + Math.random() * 0.7;
+    snowflake.style.animationDuration = 5 + Math.random() * 12 + 's';
+    snowflake.style.animationDelay = Math.random() * 10 + 's';
+    document.body.appendChild(snowflake);
+  }
+</script>
+
+<!-- App Script -->
+<script src="./app.js" defer></script>
+
+</body>
+</html>
